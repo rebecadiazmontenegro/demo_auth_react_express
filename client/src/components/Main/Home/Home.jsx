@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 const Home = (props) => {
   const [email, setEmail] = useState("");
@@ -15,32 +16,57 @@ const Home = (props) => {
         const request = await axios({
           method: 'get',
           url: 'api/test',
-        })
+        });
         console.log(request.data);
       } catch (error) {
         console.log(error.message);
       }
-    }
+    };
     testConnection();
-  }, [])
+  }, []);
 
   useEffect(() => {
-    const emailValidation = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    const emailValidation = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailValidation.test(email) && email.length > 0) {
       setEmailMessage("Email must have a valid format");
     } else {
       setEmailMessage("");
     }
-  }, [email])
+  }, [email]);
 
   useEffect(() => {
-    const passwordValidation = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{9,}$/
+    const passwordValidation = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{9,}$/;
     if (!passwordValidation.test(password) && password.length > 0) {
-      setPasswordMessage("Password must contain lowecase, uppercase, digit and special character");
+      setPasswordMessage("Password must contain lowercase, uppercase, digit, and special character");
     } else {
       setPasswordMessage("");
     }
-  }, [password])
+  }, [password]);
+
+  useEffect(() => {
+    // Leer el token desde las cookies
+    const cookies = document.cookie.split('; ');
+    const accessToken = cookies.find(row => row.startsWith('access_token='))?.split('=')[1];
+
+    if (accessToken) {
+        try {
+            // Decodificar el token para obtener el rol            
+            const decodedToken = jwtDecode(accessToken);
+            const role = decodedToken.role;
+
+            // Actualizar el estado del frontend
+            axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+            props.logged.setLogged(true);
+            props.role.setRole(role);
+            setMessage(`Logged in as ${role}`);
+        } catch (error) {
+            console.error('Error decoding token:', error);
+        }
+    } else {
+        props.logged.setLogged(false);
+        props.role.setRole('');
+    }
+  }, [props.logged, props.role]);
 
   const handleEmail = (e) => setEmail(e.target.value);
   const handlePassword = (e) => setPassword(e.target.value);
@@ -52,11 +78,11 @@ const Home = (props) => {
       const request = await axios({
         method: 'post',
         url: 'api/users/signup',
-        data: { email, password, role }
+        data: { email, password, role },
       });
       setMessage(request.data.msg);
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
   };
 
@@ -65,16 +91,15 @@ const Home = (props) => {
       const response = await axios({
         method: 'post',
         url: 'api/users/login',
-        data: { email, password }
+        data: { email, password },
       });
-     
+
       const authHeader = response.headers.authorization;
-  
+
       axios.defaults.headers.common['Authorization'] = authHeader;
       props.logged.setLogged(true);
       props.role.setRole(response.data.role);
-      setMessage(`Authorisation Header ${authHeader}`);
-
+      setMessage(`Authorization Header ${authHeader}`);
     } catch (error) {
       console.log(error.message);
     }
@@ -84,7 +109,7 @@ const Home = (props) => {
     try {
       await axios({
         method: 'get',
-        url: 'api/users/logout'
+        url: 'api/users/logout',
       });
       props.logged.setLogged(false);
     } catch (error) {
@@ -97,7 +122,7 @@ const Home = (props) => {
       const request = await axios({
         method: 'get',
         url: 'api/resources/protectedresource',
-        withCredentials: true
+        withCredentials: true,
       });
 
       if (request.status === 200) {
@@ -113,26 +138,31 @@ const Home = (props) => {
         setMessage("Unauthorized");
       }
     }
-
   };
 
+  const handleGoogleLogin = () => {
+    // REACT_APP_BACKEND_URL=http://localhost:5000/api/users/auth/google
+    window.location.href = process.env.REACT_APP_BACKEND_URL;
+  };
 
-  return <div className="home">
-    <input type="email" placeholder="email" onChange={handleEmail} />
-    {emailMessage ? <span>{emailMessage}</span> : ""}
-    <input type="password" placeholder="password" onChange={handlePassword} />
-    {passwordMessage ? <span>{passwordMessage}</span> : ""}
-    <select value={role} onChange={handleRole} >
-      <option value="client">Client</option>
-      <option value="admin">Admin</option>
-    </select>
-    <span>{message}</span>
-    <button onClick={handleSignUp}>Sign Up</button>
-    <button onClick={handleLogin}>Login</button>
-    <button onClick={handleLogout}>Logout</button>
-    <button onClick={resourceRequest}>Protected resource request</button>
-  </div>;
-
+  return (
+    <div className="home">
+      <input type="email" placeholder="email" onChange={handleEmail} />
+      {emailMessage ? <span>{emailMessage}</span> : ""}
+      <input type="password" placeholder="password" onChange={handlePassword} />
+      {passwordMessage ? <span>{passwordMessage}</span> : ""}
+      <select value={role} onChange={handleRole}>
+        <option value="client">Client</option>
+        <option value="admin">Admin</option>
+      </select>
+      <span>{message}</span>
+      <button onClick={handleSignUp}>Sign Up</button>
+      <button onClick={handleLogin}>Login</button>
+      <button onClick={handleLogout}>Logout</button>
+      <button onClick={resourceRequest}>Protected resource request</button>
+      <button onClick={handleGoogleLogin}>Login with Google</button>
+    </div>
+  );
 };
 
 export default Home;
