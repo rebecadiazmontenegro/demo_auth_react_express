@@ -8,15 +8,17 @@ To see authentication only with headers check the branch 'auth_headers'.
 ### How to start the project
 
 1. Clone the repository:
-   ```bash
+
+```bash
    git clone https://github.com/your-repo/demo_auth_react_express.git
    cd demo_auth_react_express
   ```
+
 2. Install server and client dependencies:
-   ```bash
+```bash
    npm install
    npm run install:client
-   ```
+```
 
 #### Development Mode
 
