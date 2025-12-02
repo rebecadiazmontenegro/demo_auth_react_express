@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
 
-
 const configParams = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    ssl: true,
-    sslValidate: false,
+    ssl: process.env.DB_SSL==true && process.env.NODE_ENV === 'production',
+    sslValidate: process.env.DB_SSL==true && process.env.NODE_ENV === 'production',
 }
 
 mongoose.connect(process.env.MONGO_URI, configParams);
