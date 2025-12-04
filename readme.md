@@ -5,6 +5,67 @@ You can visit a deployed version of this app [here](https://demo-auth-react-expr
 To see authentication only with cookies check the branch 'cookies'.
 To see authentication only with headers check the branch 'auth_headers'.
 
+## Libraries Used
+
+### Backend
+The backend of this project uses the following libraries:
+
+- **Express**: Web framework for Node.js.
+- **Mongoose**: MongoDB object modeling for Node.js.
+- **Passport**: Middleware for authentication.
+- **Passport-Google-OAuth20**: Strategy for Google OAuth 2.0.
+- **Jsonwebtoken**: For generating and verifying JWT tokens.
+- **Cookie-Parser**: Middleware to parse cookies.
+- **Express-Session**: Middleware for managing user sessions.
+- **Dotenv**: For managing environment variables.
+- **Cors**: Middleware to enable Cross-Origin Resource Sharing.
+- **Bcryptjs**: For hashing passwords.
+- **Concurrently**: Utility to run multiple commands concurrently, used for running both the client and server in development mode.
+
+### Backend Folder Structure
+```
+server/
+  routes/
+    auth.js
+    users.js
+  controllers/
+    authController.js
+    userController.js
+  middleware/
+    authMiddleware.js
+  models/
+    User.js
+  config/
+    db.js
+  app.js
+  server.js
+```
+
+### Frontend
+The frontend of this project with React uses the following libraries:
+
+- **React-Router-Dom**: For routing in React applications.
+- **Axios**: For making HTTP requests.
+- **Jwt-Decode**: For decoding JWT tokens.
+
+
+### Frontend Folder Structure
+```
+client/
+  src/
+    components/
+      Header/
+      Footer/
+      Main/
+        Home/
+        Admin/
+        Client/
+    utils/
+      RoleManager/
+      ProtectedRoutes/
+  public/
+```
+
 ### How to start the project
 
 1. Clone the repository:
@@ -117,7 +178,6 @@ This endpoint must:
 - Check if the user exists in the database; if not, create a new user with the default role.
 - Generate an access token and set it as a cookie.
 - Redirect the user to the frontend with the logged-in state.
-
 
 ## React 
 
