@@ -100,7 +100,7 @@ client/
       GOOGLE_CLIENT_ID=
       GOOGLE_CLIENT_SECRET=
       GOOGLE_CALLBACK_URL=http://localhost:5000/api/users/google/callback
-
+      # Frontend in PORT 5000
       FRONTEND_URL=http://localhost:3000
    ```
 2. Start the server and client:
@@ -114,12 +114,21 @@ The client will be available at [http://localhost:3000](http://localhost:3000) a
 
 1. Create a `.env` file with the following variables. You can copy the content of `.env.example.production`:
    ```env
-    MONGO_URI=mongodb://localhost:27017/bbdd_auth
-    MY_TOKEN_SECRET=Op9WwkTeh45k0
-    # DB_SSL=true con MongoDB Atlas
-    DB_SSL=false
-    # Production
-    NODE_ENV=production
+   # La idea es que esta MONGO_URI sea la BBDD de mongoDB Atlas en el futuro
+   MONGO_URI=mongodb://localhost:27017/bbdd_auth
+   MY_TOKEN_SECRET=Op9WwkTeh45k0
+   # DB_SSL=true si la BBDD MongoDB está desplegada en Atlas
+   DB_SSL=false
+
+   # Production
+   NODE_ENV=production
+
+   # Google OAuth
+   GOOGLE_CLIENT_ID=
+   GOOGLE_CLIENT_SECRET=
+   GOOGLE_CALLBACK_URL=http://localhost:5000/api/users/google/callback
+   # Backend and frontend in PORT 5000
+   FRONTEND_URL=http://localhost:5000
    ```
 
 2. Build the client and start the server:
